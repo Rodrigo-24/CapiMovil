@@ -1,0 +1,194 @@
+/* =========================================================
+   LOGIN COMPACTO - PEGAR AL FINAL DEL CSS
+   ========================================================= */
+
+.cap-login-shell {
+    min-height: 100vh !important;
+    padding: 0.5rem 0 !important;
+    align-items: center !important;
+    overflow-y: hidden !important;
+}
+
+.cap-login-stage {
+    width: min(92vw, 1120px) !important;
+    max-height: calc(100vh - 1rem) !important;
+    border-radius: 26px !important;
+}
+
+.cap-login-hero {
+    min-height: 500px !important;
+    padding: 0.8rem 1rem 3.8rem !important;
+}
+
+.cap-hero-logo {
+    width: min(430px, 72%) !important;
+    margin-top: 0 !important;
+}
+
+.cap-hero-main {
+    width: 76% !important;
+    max-height: 285px !important;
+    bottom: 28px !important;
+}
+
+.cap-login-card {
+    max-width: 380px !important;
+    padding: 1.45rem 1.5rem 1.25rem !important;
+    border-radius: 24px !important;
+}
+
+.cap-card-badge {
+    width: 60px !important;
+    height: 60px !important;
+    top: -28px !important;
+    font-size: 1.35rem !important;
+    border-width: 4px !important;
+}
+
+.cap-login-card h1 {
+    font-size: 2.35rem !important;
+    margin-top: 0.35rem !important;
+}
+
+.cap-login-card > p {
+    font-size: 1rem !important;
+    margin: 0.25rem 0 0.9rem !important;
+}
+
+.cap-input-group {
+    border-radius: 14px !important;
+    padding: 0.15rem 0.4rem !important;
+}
+
+    .cap-input-group .form-control {
+        font-size: 0.95rem !important;
+        min-height: 38px !important;
+        padding: 0.4rem 0.2rem !important;
+    }
+
+    .cap-input-group .input-group-text,
+    .cap-eye {
+        font-size: 1rem !important;
+    }
+
+.cap-login-btn {
+    min-height: 46px !important;
+    font-size: 1.1rem !important;
+    padding: 0.55rem 1rem !important;
+    border-radius: 14px !important;
+}
+
+.cap-secure-note {
+    font-size: 0.9rem !important;
+}
+
+.cap-benefits {
+    padding: 0.55rem 1.4rem !important;
+    gap: 0.6rem !important;
+}
+
+    .cap-benefits i {
+        width: 34px !important;
+        height: 34px !important;
+        min-width: 34px !important;
+        font-size: 0.95rem !important;
+    }
+
+    .cap-benefits h3 {
+        font-size: 0.78rem !important;
+    }
+
+    .cap-benefits p {
+        font-size: 0.68rem !important;
+    }
+
+.cap-pin {
+    font-size: 2.4rem !important;
+}
+
+.cap-route {
+    width: 110px !important;
+    height: 52px !important;
+    border-width: 3px !important;
+}
+
+/* Pantallas menores a 1400px: aún más compacto */
+@media (max-width: 1400px) {
+    .cap-login-stage {
+        width: min(94vw, 1060px) !important;
+    }
+
+    .cap-login-hero {
+        min-height: 430px !important;
+        padding-bottom: 1rem !important;
+    }
+
+    .cap-hero-logo {
+        width: min(360px, 70%) !important;
+    }
+
+    .cap-hero-main {
+        max-height: 210px !important;
+        width: 78% !important;
+        margin-top: 0.3rem !important;
+    }
+
+    .cap-login-card {
+        max-width: 360px !important;
+        padding: 1.3rem 1.35rem 1.1rem !important;
+    }
+
+        .cap-login-card h1 {
+            font-size: 2rem !important;
+        }
+
+        .cap-login-card > p {
+            font-size: 0.92rem !important;
+        }
+
+    .cap-benefits {
+        display: none !important;
+    }
+}
+
+/* Móvil */
+@media (max-width: 576px) {
+    .cap-login-shell {
+        overflow-y: auto !important;
+    }
+
+    .cap-login-stage {
+        width: 100% !important;
+        min-height: 100dvh !important;
+        max-height: none !important;
+        border-radius: 0 !important;
+    }
+
+    .cap-login-hero {
+        min-height: 190px !important;
+        padding: 0.6rem 0.75rem 0 !important;
+    }
+
+    .cap-hero-logo {
+        width: min(240px, 82%) !important;
+    }
+
+    .cap-hero-main {
+        max-height: 115px !important;
+        width: 88% !important;
+    }
+
+    .cap-login-card {
+        margin: 0.5rem 0.75rem !important;
+        max-width: none !important;
+        padding: 1.2rem 0.95rem 1rem !important;
+    }
+
+        .cap-login-card h1 {
+            font-size: 1.75rem !important;
+        }
+
+        .cap-login-card > p {
+            font-size: 0.9rem !important;
+        }
+}

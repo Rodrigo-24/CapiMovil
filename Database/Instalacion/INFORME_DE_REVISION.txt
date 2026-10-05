@@ -1,0 +1,49 @@
+REVISION TECNICA DE CAPIMOVILDB
+===============================
+
+Fuente revisada
+- Entidades de CapiMovil.BL.BE.
+- Acceso a datos de CapiMovil.DL.DALC.
+- Reglas de negocio de CapiMovil.BL.BC.
+- Scripts SQL incluidos en CapiMovil-main(2).zip.
+
+Hallazgos principales
+1. El proyecto usa SQL Server mediante System.Data.SqlClient.
+2. El codigo C# invoca 118 procedimientos almacenados distintos. La primera
+   revision no habia contado las construcciones abreviadas "new(\"sp_...\")".
+3. Los scripts recibidos eran parches acumulativos, no una instalacion limpia.
+4. Varias versiones del mismo procedimiento se contradecian entre si.
+5. El script de limpieza del 26/04 contiene eliminaciones masivas y fue excluido.
+6. Los siguientes procedimientos requeridos por RecorridoDALC no estaban
+   definidos en los scripts recibidos y fueron reconstruidos:
+   - sp_Conductor_ListarRecorridosHoy
+   - sp_Conductor_ListarEstudiantesPorRecorrido
+   - sp_Conductor_ListarParaderosPorRecorrido
+   - sp_Conductor_ListarEstudiantesPorParadero
+   - sp_Conductor_ListarIncidenciasPendientes
+   Tambien faltaba sp_Conductor_ObtenerPorIdUsuario, requerido al iniciar sesion
+   y resolver el perfil asociado al usuario conductor.
+7. sp_EventoAbordaje_ObtenerResumenEstudianteRecorrido estaba solamente en un
+   parche historico no seguro de ejecutar completo; se incorporo de forma aislada.
+8. Se conservaron las correcciones finales del 25, 26 y 27 de abril.
+9. Faltaban dbo.fn_Codigo_Sanitizar y dbo.fn_Bus_Codigo_Fragmento, requeridas
+   por el registro de buses.
+10. Usuario.IdUsuario y Estudiante.IdEstudiante no generaban NEWID() cuando los
+    INSERT de los procedimientos omitian esas columnas.
+11. Dos metodos de UsuarioDALC usaban ExecuteNonQuery aunque sus procedimientos
+    retornaban SELECT; podian informar un fallo falso despues de actualizar.
+12. Se normalizo la cultura de numeros para evitar que coordenadas decimales
+    como -12.0464 fueran interpretadas con un separador incorrecto.
+
+Validaciones realizadas
+- Cada procedimiento invocado por las clases DALC tiene una definicion final.
+- Cada parametro enviado desde C# existe en la firma SQL final correspondiente.
+- Las columnas de INSERT fueron contrastadas con el esquema reconstruido.
+- Se verifico que ningun archivo de instalacion elimine CapiMovilDB.
+- 99_Validar_Instalacion.sql comprueba 19 tablas, las funciones auxiliares, los
+  118 procedimientos obligatorios y sus dependencias internas.
+
+Limitacion
+La instalacion no pudo ejecutarse contra una instancia real de SQL Server dentro
+del entorno de revision. La validacion realizada es estatica. Por eso debe probarse
+primero en CapiMovilDB_Reconstruida y conservar intacta la base original.

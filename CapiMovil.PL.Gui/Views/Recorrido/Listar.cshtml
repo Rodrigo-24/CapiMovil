@@ -1,0 +1,119 @@
+﻿@model List<CapiMovil.BL.BE.RecorridoBE>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Lista de Recorridos";
+
+    var total = Model?.Count ?? 0;
+    var programados = Model?.Count(x => x.EstadoRecorrido == "PROGRAMADO") ?? 0;
+    var enCurso = Model?.Count(x => x.EstadoRecorrido == "EN_CURSO") ?? 0;
+    var finalizados = Model?.Count(x => x.EstadoRecorrido == "FINALIZADO") ?? 0;
+    var cancelados = Model?.Count(x => x.EstadoRecorrido == "CANCELADO") ?? 0;
+    string rol = (HttpContextAccessor.HttpContext?.Session.GetString("RolNombre") ?? string.Empty).Trim().ToUpperInvariant();
+    bool esConductor = rol == "CONDUCTOR";
+}
+
+<div class="list-shell">
+    <div class="list-toolbar mb-4">
+        <div>
+            <h2 class="list-title mb-1">Operaciones - Recorridos</h2>
+            <p class="list-subtitle mb-0">Administra, inicia, finaliza o cancela los recorridos programados.</p>
+        </div>
+        <a asp-action="Crear" class="btn btn-primary list-btn-primary"><i class="bi bi-plus-circle me-1"></i>Nuevo recorrido</a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-xl-2"><div class="list-kpi-card"><small>Total</small><strong>@total</strong></div></div>
+        <div class="col-6 col-md-4 col-xl-2"><div class="list-kpi-card"><small>Programados</small><strong class="text-primary">@programados</strong></div></div>
+        <div class="col-6 col-md-4 col-xl-2"><div class="list-kpi-card"><small>En curso</small><strong class="text-success">@enCurso</strong></div></div>
+        <div class="col-6 col-md-4 col-xl-2"><div class="list-kpi-card"><small>Finalizados</small><strong class="text-secondary">@finalizados</strong></div></div>
+        <div class="col-6 col-md-4 col-xl-2"><div class="list-kpi-card"><small>Cancelados</small><strong class="text-danger">@cancelados</strong></div></div>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row g-3">
+            @foreach (var item in Model.OrderByDescending(x => x.Fecha).ThenByDescending(x => x.FechaCreacion))
+            {
+                string estado = (item.EstadoRecorrido ?? string.Empty).Trim().ToUpperInvariant();
+                string estadoClass = estado switch
+                {
+                    "PROGRAMADO" => "text-bg-primary",
+                    "EN_CURSO" => "text-bg-success",
+                    "FINALIZADO" => "text-bg-secondary",
+                    "CANCELADO" => "text-bg-danger",
+                    _ => "text-bg-dark"
+                };
+
+                <div class="col-12 col-xl-6">
+                    <article class="list-entity-card h-100">
+                        <header class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                            <div>
+                                <div class="list-code">@item.CodigoRecorrido</div>
+                                <h3 class="h6 mb-0">@(item.Ruta?.Nombre ?? "Ruta no asignada")</h3>
+                            </div>
+                            <span class="badge @estadoClass">@estado.Replace("_", " ")</span>
+                        </header>
+
+                        <div class="list-meta-grid mb-3">
+                            <div><small>Bus</small><strong>@(item.Bus?.Placa ?? "Sin bus")</strong></div>
+                            <div><small>Conductor</small><strong>@($"{item.Conductor?.Nombres} {item.Conductor?.ApellidoPaterno}".Trim())</strong></div>
+                            <div><small>Fecha</small><strong>@item.Fecha.ToString("dd/MM/yyyy")</strong></div>
+                            <div><small>Horario programado</small><strong>@(item.HoraInicioProgramada?.ToString(@"hh\:mm") ?? "--:--") - @(item.HoraFinProgramada?.ToString(@"hh\:mm") ?? "--:--")</strong></div>
+                            <div><small>Horario real</small><strong>@(item.HoraInicioReal?.ToString("HH:mm") ?? "--:--") - @(item.HoraFinReal?.ToString("HH:mm") ?? "--:--")</strong></div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            @if (estado == "PROGRAMADO")
+                            {
+                                <a asp-action="Editar" asp-route-id="@item.IdRecorrido" class="btn btn-outline-warning btn-sm"><i class="bi bi-pencil-square me-1"></i>Editar</a>
+
+                                @if (esConductor)
+                                {
+                                    <form asp-action="Iniciar" asp-route-id="@item.IdRecorrido" method="post" class="d-inline" data-disable-on-submit data-confirm data-confirm-title="¿Iniciar recorrido?" data-confirm-text="El recorrido pasará a estado EN CURSO." data-confirm-icon="question" data-confirm-confirm-text="Sí, iniciar" data-confirm-cancel-text="Cancelar">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-outline-success btn-sm" data-loading-text="Iniciando..."><i class="bi bi-play-fill me-1"></i>Iniciar</button>
+                                    </form>
+                                }
+
+                                <form asp-action="Cancelar" asp-route-id="@item.IdRecorrido" method="post" class="d-inline" data-disable-on-submit data-confirm data-confirm-title="¿Cancelar recorrido?" data-confirm-text="El recorrido cambiará a estado CANCELADO." data-confirm-icon="warning" data-confirm-confirm-text="Sí, cancelar" data-confirm-cancel-text="Volver">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm" data-loading-text="Cancelando..."><i class="bi bi-x-circle me-1"></i>Cancelar</button>
+                                </form>
+
+                                <form asp-action="Eliminar" asp-route-id="@item.IdRecorrido" method="post" class="d-inline" data-disable-on-submit data-confirm data-confirm-title="¿Eliminar recorrido?" data-confirm-text="Se realizará una eliminación lógica. Podrás auditar esta acción." data-confirm-icon="warning" data-confirm-confirm-text="Sí, eliminar" data-confirm-cancel-text="Cancelar">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" data-loading-text="Eliminando..."><i class="bi bi-trash me-1"></i>Eliminar</button>
+                                </form>
+                            }
+                            else if (estado == "EN_CURSO")
+                            {
+                                @if (esConductor)
+                                {
+                                    <form asp-action="Finalizar" asp-route-id="@item.IdRecorrido" method="post" class="d-inline" data-disable-on-submit data-confirm data-confirm-title="¿Finalizar recorrido?" data-confirm-text="El recorrido pasará a estado FINALIZADO." data-confirm-icon="warning" data-confirm-confirm-text="Sí, finalizar" data-confirm-cancel-text="Cancelar">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-outline-primary btn-sm" data-loading-text="Finalizando..."><i class="bi bi-check2-circle me-1"></i>Finalizar</button>
+                                    </form>
+                                }
+
+                                <form asp-action="Cancelar" asp-route-id="@item.IdRecorrido" method="post" class="d-inline" data-disable-on-submit data-confirm data-confirm-title="¿Cancelar recorrido?" data-confirm-text="El recorrido cambiará a estado CANCELADO." data-confirm-icon="warning" data-confirm-confirm-text="Sí, cancelar" data-confirm-cancel-text="Volver">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" data-loading-text="Cancelando..."><i class="bi bi-stop-circle me-1"></i>Cancelar</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">Sin acciones disponibles para este estado.</span>
+                            }
+                        </div>
+                    </article>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        @await Html.PartialAsync("_ListEmptyState", ("Sin recorridos programados", "Aún no existen recorridos para mostrar. Crea uno nuevo para iniciar la operación.", "bi-signpost-split"))
+    }
+</div>

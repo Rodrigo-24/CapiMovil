@@ -1,0 +1,140 @@
+﻿@model List<CapiMovil.BL.BE.IncidenciaBE>
+
+@{
+    ViewData["Title"] = "Incidencias";
+
+    int total = Model?.Count ?? 0;
+    int pendientes = Model?.Count(x => x.EstadoIncidencia == "PENDIENTE") ?? 0;
+    int atendidas = Model?.Count(x => x.EstadoIncidencia == "ATENDIDA") ?? 0;
+    int cerradas = Model?.Count(x => x.EstadoIncidencia == "CERRADA") ?? 0;
+    int criticas = Model?.Count(x => x.Prioridad == "CRITICA") ?? 0;
+}
+
+<div class="list-shell">
+    <div class="list-toolbar mb-4">
+        <div>
+            <h2 class="list-title mb-1">Gestión de Incidencias</h2>
+            <p class="list-subtitle mb-0">Panel operativo con lectura rápida de tipo, estado, prioridad y acciones.</p>
+        </div>
+        <a asp-action="Crear" class="btn btn-primary list-btn-primary">
+            <i class="bi bi-plus-circle me-1"></i>Nueva incidencia
+        </a>
+    </div>
+
+    @if (TempData["ok"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            @TempData["ok"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            @TempData["error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-xl-2"><div class="list-kpi-card"><small>Total</small><strong>@total</strong></div></div>
+        <div class="col-6 col-md-4 col-xl-2"><div class="list-kpi-card"><small>Pendientes</small><strong class="text-warning">@pendientes</strong></div></div>
+        <div class="col-6 col-md-4 col-xl-2"><div class="list-kpi-card"><small>Atendidas</small><strong class="text-primary">@atendidas</strong></div></div>
+        <div class="col-6 col-md-4 col-xl-2"><div class="list-kpi-card"><small>Cerradas</small><strong class="text-success">@cerradas</strong></div></div>
+        <div class="col-6 col-md-4 col-xl-2"><div class="list-kpi-card"><small>Críticas</small><strong class="text-danger">@criticas</strong></div></div>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row g-3">
+            @foreach (var item in Model.OrderByDescending(x => x.FechaHora))
+            {
+                string estado = (item.EstadoIncidencia ?? string.Empty).Trim().ToUpperInvariant();
+                string prioridad = (item.Prioridad ?? string.Empty).Trim().ToUpperInvariant();
+
+                string estadoClass = estado switch
+                {
+                    "PENDIENTE" => "text-bg-warning",
+                    "ATENDIDA" => "text-bg-primary",
+                    "CERRADA" => "text-bg-success",
+                    _ => "text-bg-secondary"
+                };
+
+                string prioridadClass = prioridad switch
+                {
+                    "CRITICA" => "text-bg-danger",
+                    "ALTA" => "text-bg-warning",
+                    "MEDIA" => "text-bg-info",
+                    _ => "text-bg-secondary"
+                };
+
+                <div class="col-12 col-lg-6">
+                    <article class="list-entity-card h-100">
+                        <header class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                            <div>
+                                <div class="list-code">@item.CodigoIncidencia</div>
+                                <h3 class="h6 mb-0">@item.TipoIncidencia</h3>
+                            </div>
+                            <div class="d-flex gap-1 flex-wrap justify-content-end">
+                                <span class="badge @estadoClass">@estado</span>
+                                <span class="badge @prioridadClass">@(prioridad == "CRITICA" ? "CRÍTICA" : prioridad)</span>
+                            </div>
+                        </header>
+
+                        <p class="list-description">@item.Descripcion</p>
+
+                        <div class="list-meta-grid mb-3">
+                            <div><small>Fecha y hora</small><strong>@item.FechaHora.ToString("dd/MM/yyyy HH:mm")</strong></div>
+                            <div><small>Conductor</small><strong>@(string.IsNullOrWhiteSpace(item.NombreConductor) ? "Sin asignar" : item.NombreConductor)</strong></div>
+                            <div><small>Recorrido</small><strong>@(string.IsNullOrWhiteSpace(item.CodigoRecorrido) ? "No aplica" : item.CodigoRecorrido)</strong></div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <a asp-action="Detalle" asp-route-id="@item.IdIncidencia" class="btn btn-outline-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalle</a>
+
+                            @if (estado != "CERRADA")
+                            {
+                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalCerrar_@item.IdIncidencia">
+                                    <i class="bi bi-check2-circle me-1"></i>Cerrar
+                                </button>
+                            }
+                        </div>
+                    </article>
+                </div>
+
+                @if (estado != "CERRADA")
+                {
+                    <div class="modal fade" id="modalCerrar_@item.IdIncidencia" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow">
+                                <form asp-action="Cerrar" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Cerrar Incidencia</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" name="id" value="@item.IdIncidencia" />
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">Solución</label>
+                                            <textarea name="solucion" class="form-control" rows="4" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Cancelar</button>
+                                        <button type="submit" class="btn btn-success">Cerrar incidencia</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    }
+    else
+    {
+        @await Html.PartialAsync("_ListEmptyState", ("Sin incidencias", "Aún no se registraron incidencias operativas.", "bi-exclamation-circle"))
+    }
+</div>

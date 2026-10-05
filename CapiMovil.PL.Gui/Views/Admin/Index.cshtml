@@ -1,0 +1,65 @@
+@model CapiMovil.PL.Gui.Models.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard Admin";
+}
+
+<div class="admin-dashboard-shell">
+    <div class="card border-0 shadow-sm admin-welcome mb-3 mb-xl-4">
+        <div class="card-body p-4 p-lg-5">
+            <h1 class="fw-bold mb-2 app-section-title">@Model.Saludo, Administrador</h1>
+            <p class="app-section-subtitle mb-0">Panel ejecutivo para supervisar operación, pendientes y accesos de gestión.</p>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-3 mb-xl-4">
+        <div class="col-6 col-lg-3"><div class="admin-metric card border-0 shadow-sm h-100"><div class="card-body"><div class="admin-metric-title">Usuarios activos</div><div class="admin-metric-value">@Model.TotalUsuariosActivos</div><span class="badge text-bg-success">Activo</span></div></div></div>
+        <div class="col-6 col-lg-3"><div class="admin-metric card border-0 shadow-sm h-100"><div class="card-body"><div class="admin-metric-title">Padres activos</div><div class="admin-metric-value">@Model.TotalPadresActivos</div><span class="badge text-bg-success">Activo</span></div></div></div>
+        <div class="col-6 col-lg-3"><div class="admin-metric card border-0 shadow-sm h-100"><div class="card-body"><div class="admin-metric-title">Conductores activos</div><div class="admin-metric-value">@Model.TotalConductoresActivos</div><span class="badge text-bg-success">Activo</span></div></div></div>
+        <div class="col-6 col-lg-3"><div class="admin-metric card border-0 shadow-sm h-100"><div class="card-body"><div class="admin-metric-title">Estudiantes activos</div><div class="admin-metric-value">@Model.TotalEstudiantes</div><span class="badge text-bg-primary">Registrado</span></div></div></div>
+        <div class="col-6 col-lg-3"><div class="admin-metric card border-0 shadow-sm h-100"><div class="card-body"><div class="admin-metric-title">Buses activos</div><div class="admin-metric-value">@Model.TotalBusesActivos</div><span class="badge text-bg-success">Activo</span></div></div></div>
+        <div class="col-6 col-lg-3"><div class="admin-metric card border-0 shadow-sm h-100"><div class="card-body"><div class="admin-metric-title">Rutas activas</div><div class="admin-metric-value">@Model.TotalRutasActivas</div><span class="badge text-bg-success">Activo</span></div></div></div>
+        <div class="col-6 col-lg-3"><div class="admin-metric card border-0 shadow-sm h-100"><div class="card-body"><div class="admin-metric-title">Recorridos de hoy</div><div class="admin-metric-value">@Model.TotalRecorridosProgramadosHoy</div><span class="badge text-bg-info">Programado</span></div></div></div>
+        <div class="col-6 col-lg-3"><div class="admin-metric card border-0 shadow-sm h-100"><div class="card-body"><div class="admin-metric-title">Recorridos en curso</div><div class="admin-metric-value">@Model.TotalRecorridosEnCurso</div><span class="badge text-bg-warning">En curso</span></div></div></div>
+        <div class="col-6 col-lg-3"><div class="admin-metric card border-0 shadow-sm h-100"><div class="card-body"><div class="admin-metric-title">Incidencias pendientes</div><div class="admin-metric-value">@Model.TotalIncidenciasPendientes</div><span class="badge text-bg-danger">Pendiente</span></div></div></div>
+        <div class="col-6 col-lg-3"><div class="admin-metric card border-0 shadow-sm h-100"><div class="card-body"><div class="admin-metric-title">Notificaciones no leídas</div><div class="admin-metric-value">@Model.TotalNotificacionesNoLeidas</div><span class="badge text-bg-secondary">Pendiente</span></div></div></div>
+        <div class="col-6 col-lg-3"><div class="admin-metric card border-0 shadow-sm h-100"><div class="card-body"><div class="admin-metric-title">Abordajes hoy</div><div class="admin-metric-value">@Model.TotalAbordajesHoy</div><span class="badge text-bg-primary">Registrado</span></div></div></div>
+        <div class="col-6 col-lg-3"><div class="admin-metric card border-0 shadow-sm h-100"><div class="card-body"><div class="admin-metric-title">Incidencias críticas</div><div class="admin-metric-value">@Model.TotalIncidenciasCriticas</div><span class="badge text-bg-danger">Crítica</span></div></div></div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-3 mb-xl-4">
+        <div class="card-body p-4">
+            <h2 class="h5 fw-bold mb-3">Acciones rápidas</h2>
+            <div class="row g-2 admin-quick-links">
+                <div class="col-6 col-md-4 col-xl-3"><a class="btn btn-light w-100" asp-controller="Usuario" asp-action="Listar"><i class="bi bi-people me-2"></i>Gestionar usuarios</a></div>
+                <div class="col-6 col-md-4 col-xl-3"><a class="btn btn-light w-100" asp-controller="PadreFamilia" asp-action="Listar"><i class="bi bi-person-hearts me-2"></i>Gestionar padres</a></div>
+                <div class="col-6 col-md-4 col-xl-3"><a class="btn btn-light w-100" asp-controller="Conductor" asp-action="Listar"><i class="bi bi-person-badge me-2"></i>Gestionar conductores</a></div>
+                <div class="col-6 col-md-4 col-xl-3"><a class="btn btn-light w-100" asp-controller="Estudiante" asp-action="Listar"><i class="bi bi-mortarboard me-2"></i>Gestionar estudiantes</a></div>
+                <div class="col-6 col-md-4 col-xl-3"><a class="btn btn-light w-100" asp-controller="Bus" asp-action="Listar"><i class="bi bi-bus-front me-2"></i>Gestionar buses</a></div>
+                <div class="col-6 col-md-4 col-xl-3"><a class="btn btn-light w-100" asp-controller="Ruta" asp-action="Listar"><i class="bi bi-signpost-2 me-2"></i>Gestionar rutas</a></div>
+                <div class="col-6 col-md-4 col-xl-3"><a class="btn btn-light w-100" asp-controller="Paradero" asp-action="Listar"><i class="bi bi-geo-alt me-2"></i>Gestionar paraderos</a></div>
+                <div class="col-6 col-md-4 col-xl-3"><a class="btn btn-light w-100" asp-controller="Recorrido" asp-action="Listar"><i class="bi bi-map me-2"></i>Gestionar recorridos</a></div>
+                <div class="col-6 col-md-4 col-xl-3"><a class="btn btn-light w-100" asp-controller="Incidencia" asp-action="Listar"><i class="bi bi-exclamation-triangle me-2"></i>Ver incidencias</a></div>
+                <div class="col-6 col-md-4 col-xl-3"><a class="btn btn-light w-100" asp-controller="Notificacion" asp-action="Listar"><i class="bi bi-bell me-2"></i>Ver notificaciones</a></div>
+                <div class="col-6 col-md-4 col-xl-3"><a class="btn btn-light w-100" asp-controller="Auditoria" asp-action="Listar"><i class="bi bi-journal-text me-2"></i>Ver auditoría</a></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-12 col-xl-6">
+            <div class="card border-0 shadow-sm admin-activity h-100"><div class="card-body p-4"><h2 class="h5 fw-bold mb-3">Actividad reciente</h2>
+                @if (!Model.ActividadReciente.Any()) { <div class="text-muted">Sin actividad reciente por mostrar.</div> }
+                else { <div class="admin-activity-list">@foreach (var item in Model.ActividadReciente) {
+                    <div class="admin-activity-item"><div class="admin-activity-icon @item.Tipo"><i class="bi @item.Icono"></i></div><div><div class="fw-semibold small">@item.Titulo</div><div class="text-muted small">@item.Descripcion</div><div class="d-flex gap-2 align-items-center"><span class="text-muted x-small">@item.FechaTexto</span><span class="badge text-bg-light">@item.EstadoTexto</span></div></div></div>
+                }</div> }
+            </div></div>
+        </div>
+        <div class="col-12 col-xl-6">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body p-4"><h2 class="h5 fw-bold mb-3">Pendientes de atención</h2>
+                <div class="admin-pending-list">@foreach (var item in Model.PendientesAtencion) {
+                    <div class="admin-pending-item"><div class="admin-activity-icon @item.Tipo"><i class="bi @item.Icono"></i></div><div class="flex-grow-1"><div class="fw-semibold small">@item.Titulo</div><div class="text-muted small">@item.Detalle</div></div><span class="badge text-bg-light">@item.Total</span></div>
+                }</div>
+            </div></div>
+        </div>
+    </div>
+</div>

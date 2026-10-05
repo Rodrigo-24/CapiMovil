@@ -1,0 +1,44 @@
+CAPIMOVILDB RECONSTRUIDA
+========================
+
+Esta entrega crea CapiMovilDB_Reconstruida sin borrar ni modificar CapiMovilDB.
+
+INSTALACION LIMPIA RECOMENDADA
+1. Abra CapiMovilDB_Completa.sql en SQL Server Management Studio (SSMS).
+2. Conectese usando Windows Authentication.
+3. Ejecute todo el archivo. No necesita SQLCMD Mode ni una carpeta especifica.
+4. Al final debe aparecer: INSTALACION VALIDADA.
+
+ACTUALIZACION DE UNA BASE EXISTENTE
+1. Cree primero un respaldo de CapiMovilDB_Reconstruida.
+2. Abra y ejecute CapiMovilDB_Actualizar.sql.
+3. Esta ruta conserva tablas y datos y vuelve a aplicar las correcciones.
+
+ACCESO
+El instalador intenta copiar de CapiMovilDB el hash BCrypt del usuario "admin".
+Por eso, si la base original esta presente, se utiliza la misma contrasena que
+ya le funciona. La contrasena no se extrae ni se muestra.
+
+CONEXION DE LA APP
+Para probar la reconstruccion sin tocar la base original, cambie temporalmente
+Database=CapiMovilDB por Database=CapiMovilDB_Reconstruida en appsettings.json.
+
+CONTENIDO
+- 00_Crear_Esquema.sql: tablas, claves, relaciones e indices.
+- 01_Corregir_Claves_Default.sql: asegura NEWID() para usuarios y estudiantes.
+- 05_Funciones_Auxiliares.sql: funciones de codigos requeridas por buses.
+- 10_Procedimientos_Base.sql: procedimientos originales normalizados a UTF-8.
+- 20 a 60: correcciones finales posteriores del proyecto.
+- 90_Procedimientos_Conductor_Faltantes.sql: procedimientos llamados por C#
+  que no estaban incluidos en los scripts recibidos.
+- 95_Datos_Iniciales.sql: roles y copia segura del acceso admin.
+- 99_Validar_Instalacion.sql: comprueba tablas, funciones, dependencias y los
+  118 procedimientos requeridos por el codigo C#.
+
+NOTAS
+- No se incluyo 20260426_Master_Limpieza_Codigos.sql porque contiene borrados
+  masivos de datos y no es necesario para una instalacion limpia.
+- No se ejecutan todos los parches historicos del 23/04: el volcado base del
+  24/04 ya contiene sus procedimientos. Ejecutarlos otra vez agregaria versiones
+  contradictorias.
+- Conserve un respaldo .bak de CapiMovilDB antes de realizar cambios.
